@@ -12,6 +12,6 @@ static const int VERSION_PATCH = 1;
 static const char *VERSION = LIMB_VERSION_STRING;
 static const char *VERSION_CODENAME = "LIMB EDITION";
 
-} // love
+}
 
 #endif

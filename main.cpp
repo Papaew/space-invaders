@@ -7,11 +7,6 @@
 #include "SDL3_ttf/SDL_ttf.h"
 #include "SDL3_mixer/SDL_mixer.h"
 #include "src/limb.hpp"
-
-#include <cmath>
-#include <string_view>
-#include <filesystem>
-
 #include "src/game.hpp"
 
 SDL_AppResult SDL_Fail()
@@ -47,15 +42,15 @@ int main()
     SDL_Renderer* renderer = SDL_CreateRenderer(window, NULL);
     if (!renderer) return SDL_Fail();
 
-	// bool vsync = SDL_GetRenderVSync(renderer, SDL_RENDERER_VSYNC_DISABLED);
-	// std::cout << "Is vsync: " << std::to_string(vsync) << std::endl;
+	bool vsync = SDL_GetRenderVSync(renderer, SDL_RENDERER_VSYNC_DISABLED);
+	std::cout << "Is vsync: " << std::to_string(vsync) << std::endl;
 
-	// int num_render_drivers = SDL_GetNumRenderDrivers();
-	// for (int i = 0; i < num_render_drivers - 1; i++)
-	// {
-	// 	std::string name = SDL_GetRenderDriver(i);
-	// 	std::cout << name << std::endl;
-	// }
+	int num_render_drivers = SDL_GetNumRenderDrivers();
+	for (int i = 0; i < num_render_drivers - 1; i++)
+	{
+		std::string name = SDL_GetRenderDriver(i);
+		std::cout << name << std::endl;
+	}
 
 	/* lua_State *L = luaL_newstate();
 	if (L == NULL)
@@ -67,31 +62,6 @@ int main()
 	luaL_loadstring(L, "print(Hello from lua!)");
 	lua_call(L, 0, 0);
 	lua_close(L); */
-
-	auto basePathPtr = SDL_GetBasePath();
-		if (not basePathPtr){
-		return SDL_Fail();
-	}
-	const std::filesystem::path basePath = basePathPtr;
-
-	// init SDL Mixer
-	auto audioDevice = SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, NULL);
-	if (not audioDevice) {
-		return SDL_Fail();
-	}
-	if (not Mix_OpenAudio(audioDevice, NULL)) {
-		return SDL_Fail();
-	}
-
-	// load the music
-	auto musicPath = basePath / "the_entertainer.ogg";
-	auto music = Mix_LoadMUS(musicPath.string().c_str());
-	if (not music) {
-		return SDL_Fail();
-	}
-
-	// play the music (does not loop)
-	Mix_PlayMusic(music, 0);
 
 	game::load();
 
