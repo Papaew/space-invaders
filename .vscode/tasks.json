@@ -13,6 +13,7 @@
 				"-g",
 				"main.cpp",
 				"src/game.cpp",
+				"src/entity.cpp",
 				"-o",
 				"${cwd}\\game.exe",
 				"-L${cwd}",

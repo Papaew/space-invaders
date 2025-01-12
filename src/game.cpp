@@ -2,7 +2,9 @@
 #include <typeinfo>
 #include "SDL3/SDL.h"
 #include <string>
+#include <vector>
 
+#include "entity.hpp"
 #include "game.hpp"
 
 void print(const std::string &message)
@@ -10,54 +12,13 @@ void print(const std::string &message)
 	std::cout << message << std::endl;
 }
 
-class Entity
-{
-public:
-	float x, y;
-	float speed;
-	SDL_FRect rect;
-
-	Entity()
-	{
-		x = 0.0f;
-		y = 0.0f;
-		rect.x = x;
-		rect.y = y;
-		rect.w = 32.0f;
-		rect.h = 32.0f;
-		speed = 100.0f;
-	};
-
-	Entity(float posX, float posY, float w, float h, float s)
-	{
-		x = posX;
-		y = posY;
-		rect.x = x;
-		rect.y = y;
-		rect.w = w;
-		rect.h = h;
-		speed = s;
-	};
-
-	void SetPosition(float newX, float newY)
-	{
-		x = newX;
-		y = newY;
-		rect.x = x;
-		rect.y = y;
-	}
-
-	void Move(float stepX, float stepY)
-	{
-		SetPosition(x+stepX, y+stepY);
-	}
-};
-
 namespace game
 {
-	GameState state = { true };
+	GameState state = {true};
 
 	Entity unit(10.0f, 10.0f, 32.0f, 32.0f, 100.0f);
+
+	std::vector<Entity*> enemies;
 
 	double dt;
 
@@ -79,6 +40,15 @@ namespace game
 	{
 		state.running = true;
 
+		for (int iy = 0; iy < 2; iy++)
+		{
+			for (int ix = 0; ix < 6; ix++)
+			{
+				Entity *e = new Entity;
+				e->SetPosition(ix*50.0f,iy*50.0f);
+				enemies.push_back(e);
+			}
+		}
 		print("Game loaded!");
 	}
 
@@ -89,16 +59,23 @@ namespace game
 		const bool *keys = SDL_GetKeyboardState(NULL);
 		float dirx, diry;
 
-		dirx = (keys[SDL_SCANCODE_RIGHT] && keys[SDL_SCANCODE_LEFT]) ? 0 : (keys[SDL_SCANCODE_LEFT]) ? -1 : (keys[SDL_SCANCODE_RIGHT]) ? 1 : 0;
-		diry = (keys[SDL_SCANCODE_DOWN] && keys[SDL_SCANCODE_UP]) ? 0 : (keys[SDL_SCANCODE_UP]) ? -1 : (keys[SDL_SCANCODE_DOWN]) ? 1 : 0;
+		dirx = (keys[SDL_SCANCODE_A] && keys[SDL_SCANCODE_D]) ? 0 : (keys[SDL_SCANCODE_A]) ? -1
+																: (keys[SDL_SCANCODE_D])   ? 1
+																						   : 0;
+		diry = (keys[SDL_SCANCODE_S] && keys[SDL_SCANCODE_W]) ? 0 : (keys[SDL_SCANCODE_W]) ? -1
+																: (keys[SDL_SCANCODE_S])   ? 1
+																						   : 0;
 
-		unit.Move(dirx*unit.speed*dt, diry*unit.speed*dt);
+		unit.Move(dirx * unit.speed * dt, diry * unit.speed * dt);
 	}
 
 	void draw(SDL_Renderer *renderer)
 	{
-		SDL_SetRenderDrawColorFloat(renderer, 0.5f, 0.5f, 0.0f, 1.0f);
-		SDL_RenderFillRect(renderer, &unit.rect);
+		unit.Render(renderer);
+		for (int i=0;  i<enemies.size(); i++)
+		{
+			enemies[i]->Render(renderer);
+		}
 	}
 
 	void OnKeyDown(SDL_KeyboardEvent keyEvent)
