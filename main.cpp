@@ -63,7 +63,7 @@ int main()
 	lua_call(L, 0, 0);
 	lua_close(L); */
 
-	game::load();
+	game::load(window);
 
 	bool quit;
 	SDL_Event event;

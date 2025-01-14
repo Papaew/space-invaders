@@ -8,7 +8,7 @@ namespace game
     };
     extern GameState state;
 
-	void load();
+	void load(SDL_Window *window);
 	void update(double &dt);
 	void draw(SDL_Renderer *renderer);
 	void CalcDelta();
