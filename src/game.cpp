@@ -59,12 +59,8 @@ namespace game
 		const bool *keys = SDL_GetKeyboardState(NULL);
 		float dirx, diry;
 
-		dirx = (keys[SDL_SCANCODE_A] && keys[SDL_SCANCODE_D]) ? 0 : (keys[SDL_SCANCODE_A]) ? -1
-																: (keys[SDL_SCANCODE_D])   ? 1
-																						   : 0;
-		diry = (keys[SDL_SCANCODE_S] && keys[SDL_SCANCODE_W]) ? 0 : (keys[SDL_SCANCODE_W]) ? -1
-																: (keys[SDL_SCANCODE_S])   ? 1
-																						   : 0;
+		dirx = (keys[SDL_SCANCODE_A] && keys[SDL_SCANCODE_D]) ? 0 : (keys[SDL_SCANCODE_A]) ? -1 : (keys[SDL_SCANCODE_D]) ? 1 : 0;
+		diry = (keys[SDL_SCANCODE_S] && keys[SDL_SCANCODE_W]) ? 0 : (keys[SDL_SCANCODE_W]) ? -1 : (keys[SDL_SCANCODE_S]) ? 1 : 0;
 
 		unit.Move(dirx * unit.speed * dt, diry * unit.speed * dt);
 	}

@@ -15,7 +15,7 @@ public:
 	void SetPosition(float newX, float newY);
 	void Move(float stepX, float stepY);
 	void Render(SDL_Renderer *renderer);
-	void SetColor(float r,float g, float b);
+	void SetColor(float r, float g, float b);
 };
 
 #endif

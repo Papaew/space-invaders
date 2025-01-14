@@ -37,7 +37,7 @@ void Entity::Move(float stepX, float stepY)
 	SetPosition(x + stepX, y + stepY);
 }
 
-void Entity::SetColor(float newR,float newG, float newB)
+void Entity::SetColor(float newR, float newG, float newB)
 {
 	r = newR;
 	g = newG;
