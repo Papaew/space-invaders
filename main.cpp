@@ -98,6 +98,8 @@ int main()
 		// LIMB_origin(renderer);
 			game::draw(renderer);
 		SDL_RenderPresent(renderer);
+
+		SDL_Delay(10);
 	}
 
 	SDL_DestroyRenderer(renderer);

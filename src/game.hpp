@@ -14,4 +14,5 @@ namespace game
 	void CalcDelta();
 	double GetDelta();
 	void OnKeyDown(SDL_KeyboardEvent keyEvent);
+	void OnBulletDestroyed (int index);
 }

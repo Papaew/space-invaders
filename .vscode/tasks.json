@@ -14,6 +14,7 @@
 				"main.cpp",
 				"src/game.cpp",
 				"src/entity.cpp",
+				"src/bullet.cpp",
 				"-o",
 				"${cwd}\\game.exe",
 				"-L${cwd}",

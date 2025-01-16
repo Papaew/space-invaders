@@ -6,6 +6,7 @@
 
 #include "entity.hpp"
 #include "game.hpp"
+#include "bullet.hpp"
 
 void print(const std::string &message)
 {
@@ -20,7 +21,7 @@ namespace game
 
 	std::vector<Entity*> enemies;
 
-	std::vector<Entity*> bullets;
+	std::vector<Bullet*> bullets;
 
 	double dt;
 
@@ -83,10 +84,20 @@ namespace game
 
 		unit.Move(dirx * unit.speed * dt, diry * unit.speed * dt);
 		
-		for (int i=0; i<bullets.size(); i++)
-		{
-			bullets[i]->Update(dt);
+		for (auto i = bullets.begin(); i != bullets.end(); /* ничего */) {
+			(*i)->Update(dt);  // Обновляем объект через разыменование итератора
+			if ((*i)->y <= 100.0f) {
+				// Удаляем объект
+				delete *i;  // Удаляем объект, на который указывает итератор
+				// Удаляем указатель из вектора
+				*i = nullptr; // нульпытр
+				i = bullets.erase(i);  // erase возвращает новый валидный итератор
+			} else {
+				++i;  // Переходим к следующему элементу
+			}
 		}
+			
+		print (std::to_string(bullets.size()));
 	}
 
 	void draw(SDL_Renderer *renderer)
@@ -112,11 +123,16 @@ namespace game
 			state.running = false;
 			break;
 		case SDLK_SPACE:
-			Entity *b = new Entity(20.0f,20.0f);
+			Bullet *b = new Bullet(20.0f,20.0f);
 			b->SetPosition(unit.x + (unit.rect.w - b->rect.w) / 2, unit.y - b->rect.h);
 			b->SetColor(1.0f,0.0f,0.0f);
 			bullets.push_back(b);
 			break;
+			// Bullet *b = new Bullet(20.0f,20.0f);
+			// b->SetPosition(unit.x + (unit.rect.w - b->rect.w) / 2, unit.y - b->rect.h);
+			// b->SetColor(1.0f,0.0f,0.0f);
+			// bullets.push_back(b);
+			// break;
 		}
 
 		
@@ -140,4 +156,8 @@ namespace game
 		}*/
 	}
 
+	void OnBulletDestroyed (int index)
+	{
+		
+	}
 }
