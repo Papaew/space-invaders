@@ -20,7 +20,6 @@ namespace game
 	Entity unit(10.0f, 10.0f, 100.0f, 100.0f, 300.0f);
 
 	std::vector<Entity*> enemies;
-
 	std::vector<Bullet*> bullets;
 
 	double dt;
@@ -80,24 +79,18 @@ namespace game
 		float dirx, diry;
 
 		dirx = (keys[SDL_SCANCODE_A] && keys[SDL_SCANCODE_D]) ? 0 : (keys[SDL_SCANCODE_A]) ? -1 : (keys[SDL_SCANCODE_D]) ? 1 : 0;
-		diry = (keys[SDL_SCANCODE_S] && keys[SDL_SCANCODE_W]) ? 0 : (keys[SDL_SCANCODE_W]) ? -1 : (keys[SDL_SCANCODE_S]) ? 1 : 0;
+		// diry = (keys[SDL_SCANCODE_S] && keys[SDL_SCANCODE_W]) ? 0 : (keys[SDL_SCANCODE_W]) ? -1 : (keys[SDL_SCANCODE_S]) ? 1 : 0;
 
 		unit.Move(dirx * unit.speed * dt, diry * unit.speed * dt);
-		
-		for (auto i = bullets.begin(); i != bullets.end(); /* ничего */) {
-			(*i)->Update(dt);  // Обновляем объект через разыменование итератора
-			if ((*i)->y <= 100.0f) {
-				// Удаляем объект
-				delete *i;  // Удаляем объект, на который указывает итератор
-				// Удаляем указатель из вектора
-				*i = nullptr; // нульпытр
-				i = bullets.erase(i);  // erase возвращает новый валидный итератор
-			} else {
-				++i;  // Переходим к следующему элементу
+
+		for (int i = bullets.size()-1; i >= 0; i--)
+		{
+			bullets[i]->Update(dt); //Обновляем
+			if (bullets[i]->y <= 100.0f || !bullets[i]->isAlive)
+			{
+				DestroyBullet(i);
 			}
 		}
-			
-		print (std::to_string(bullets.size()));
 	}
 
 	void draw(SDL_Renderer *renderer)
@@ -156,8 +149,14 @@ namespace game
 		}*/
 	}
 
-	void OnBulletDestroyed (int index)
+	void DestroyBullet (int i)
 	{
-		
+		delete bullets[i];
+		bullets.erase(bullets.begin()+i);
+	}
+	void DestroyEnemy (int i)
+	{
+		delete enemies[i];
+		enemies.erase(enemies.begin()+i);
 	}
 }

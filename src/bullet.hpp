@@ -25,7 +25,7 @@ public:
     Bullet(float w, float h);
 	void Update(double &dt);
 
-    ~Bullet();
+    virtual ~Bullet();
 };
 
 #endif

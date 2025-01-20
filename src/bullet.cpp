@@ -1,6 +1,7 @@
 #include "bullet.hpp"
 #include "game.hpp"
 // #include "SDL3/SDL.h"
+#include <iostream>
 
 Bullet::Bullet(float w, float h)
 {
@@ -18,7 +19,17 @@ void Bullet::Update(double &dt)
 {
 	SetPosition(x,y+(-1 * speed * dt));
     
-    
+    for (int i=0;  i<game::enemies.size(); i++)
+	{
+		Entity *e = game::enemies[i];
+		if (e->x < this->x + this->rect.w && e->x + e->rect.w > this->x && 
+			e->y < this->y + this->rect.h && e->y + e->rect.h > this->y)
+		{
+			this->isAlive = false;
+			game::DestroyEnemy(i);
+		}
+	}
+	
     
 }
 
