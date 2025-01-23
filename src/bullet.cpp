@@ -5,13 +5,13 @@
 
 Bullet::Bullet(float w, float h)
 {
-	x = 0.0f;
-	y = 0.0f;
-	rect.x = x;
-	rect.y = y;
+	this->x = 0.0f;
+	this->y = 0.0f;
+	rect.x = this->x;
+	rect.y = this->y;
 	rect.w = w;
 	rect.h = h;
-	speed = 100.0f;
+	speed = 400.0f;
 	r = 0.5f, g = 0.5f, b = 0.5f;
 };
 
@@ -29,8 +29,6 @@ void Bullet::Update(double &dt)
 			game::DestroyEnemy(i);
 		}
 	}
-	
-    
 }
 
 Bullet::~Bullet()

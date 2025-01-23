@@ -1,8 +1,9 @@
 // #include "SDL3/SDL.h"
-#include "entity.hpp"
 
 #ifndef BULLET_H
 #define BULLET_H
+
+#include "entity.hpp"
 
 class Bullet : public Entity
 {

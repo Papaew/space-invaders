@@ -15,6 +15,7 @@
 				"src/game.cpp",
 				"src/entity.cpp",
 				"src/bullet.cpp",
+				"src/enemy.cpp",
 				"-o",
 				"${cwd}\\game.exe",
 				"-L${cwd}",

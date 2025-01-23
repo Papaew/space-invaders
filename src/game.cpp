@@ -3,10 +3,12 @@
 #include "SDL3/SDL.h"
 #include <string>
 #include <vector>
+#include <cmath>
 
 #include "entity.hpp"
 #include "game.hpp"
 #include "bullet.hpp"
+#include "enemy.hpp"
 
 void print(const std::string &message)
 {
@@ -19,8 +21,10 @@ namespace game
 
 	Entity unit(10.0f, 10.0f, 100.0f, 100.0f, 300.0f);
 
-	std::vector<Entity*> enemies;
+	std::vector<Enemy*> enemies;
 	std::vector<Bullet*> bullets;
+
+	int leftborder,rightborder;
 
 	double dt;
 
@@ -44,13 +48,15 @@ namespace game
 
 		int windowWidth, windowHeight;
 		SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+		leftborder = 100; 
+		rightborder = windowWidth- 100;
 
-		int enemyCol = 7, enemyRow = 3;
+		int enemyCol = 11, enemyRow = 5;
 		int Gap = 50;
-		float entityWidth = 100.0f;
-		float entityHeight = 100.0f;
-		float totalEntitiesWidth = entityWidth * enemyCol + Gap * (enemyCol-1);
-		float totalEntitiesHeight = entityHeight * enemyRow + Gap * (enemyRow-1);
+		float enemyWidth = 30.0f;
+		float enemyHeight = 30.0f;
+		float totalEntitiesWidth = enemyWidth * enemyCol + Gap * (enemyCol-1);
+		float totalEntitiesHeight = enemyHeight * enemyRow + Gap * (enemyRow-1);
 		float offsetX = (windowWidth-totalEntitiesWidth)*0.5f;
 		float offsetY = (windowHeight-totalEntitiesHeight)*0.1f;
 
@@ -58,16 +64,18 @@ namespace game
 		{
 			for (int ix = 0; ix < enemyCol; ix++)
 			{
-				Entity *e = new Entity;
-				float x = ix*(entityWidth+Gap);
-				float y = iy*(entityHeight+Gap);
+				Enemy *e = new Enemy(enemyWidth,enemyHeight);
+				float x = ix*(enemyWidth+Gap);
+				float y = iy*(enemyHeight+Gap);
 				e->SetPosition(x+offsetX,y+offsetY);
 				enemies.push_back(e);
 			}
 		}
 
-		unit.SetPosition(windowWidth/2-unit.rect.w/2,windowHeight-offsetY-unit.rect.h);
+		state.maxEnemyCount = enemies.size();
 
+		unit.SetPosition(windowWidth/2-unit.rect.w/2,windowHeight-offsetY-unit.rect.h);
+		
 		print("Game loaded!");
 	}
 
@@ -83,10 +91,21 @@ namespace game
 
 		unit.Move(dirx * unit.speed * dt, diry * unit.speed * dt);
 
+		for (int i = enemies.size()-1; i >= 0; i--)
+		{
+			enemies[i]->Update(dt); //Обновляем
+			if ( enemies[i]->x > rightborder || enemies[i]->x < leftborder)
+			{
+				state.direction *= -1;
+				shiftEnemiesDown();
+				break; //нужен чтобы по пять раз не вызывать движение вниз//в низ
+			}
+		}
+
 		for (int i = bullets.size()-1; i >= 0; i--)
 		{
 			bullets[i]->Update(dt); //Обновляем
-			if (bullets[i]->y <= 100.0f || !bullets[i]->isAlive)
+			if (bullets[i]->y <= 0.0f-bullets[i]->rect.h || !bullets[i]->isAlive)
 			{
 				DestroyBullet(i);
 			}
@@ -116,7 +135,7 @@ namespace game
 			state.running = false;
 			break;
 		case SDLK_SPACE:
-			Bullet *b = new Bullet(20.0f,20.0f);
+			Bullet *b = new Bullet(10.0f,20.0f);
 			b->SetPosition(unit.x + (unit.rect.w - b->rect.w) / 2, unit.y - b->rect.h);
 			b->SetColor(1.0f,0.0f,0.0f);
 			bullets.push_back(b);
@@ -158,5 +177,13 @@ namespace game
 	{
 		delete enemies[i];
 		enemies.erase(enemies.begin()+i);
+		state.speedMult = pow (1.028f,state.maxEnemyCount - enemies.size());
+	}
+	void shiftEnemiesDown()
+	{
+		for (int i = enemies.size()-1; i >= 0; i--)
+		{
+			enemies[i]->Move(0.0f,50.0f);
+		}
 	}
 }
