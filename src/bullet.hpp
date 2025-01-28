@@ -22,8 +22,8 @@ public:
 	// void Move(float stepX, float stepY);
 	// void Render(SDL_Renderer *renderer);
 	// void SetColor(float r, float g, float b);
-
-    Bullet(float w, float h);
+	int direction;
+    Bullet(float w, float h, int direction);
 	void Update(double &dt);
 
     virtual ~Bullet();

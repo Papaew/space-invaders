@@ -3,7 +3,7 @@
 // #include "SDL3/SDL.h"
 #include <iostream>
 
-Bullet::Bullet(float w, float h)
+Bullet::Bullet(float w, float h, int direction)
 {
 	this->x = 0.0f;
 	this->y = 0.0f;
@@ -13,17 +13,17 @@ Bullet::Bullet(float w, float h)
 	rect.h = h;
 	speed = 400.0f;
 	r = 0.5f, g = 0.5f, b = 0.5f;
+	this->direction = direction;
 };
 
 void Bullet::Update(double &dt)
 {
-	SetPosition(x,y+(-1 * speed * dt));
+	SetPosition(x,y+(direction * speed * dt));
     
     for (int i=0;  i<game::enemies.size(); i++)
 	{
 		Entity *e = game::enemies[i];
-		if (e->x < this->x + this->rect.w && e->x + e->rect.w > this->x && 
-			e->y < this->y + this->rect.h && e->y + e->rect.h > this->y)
+		if (game::collision(e->rect,this->rect))
 		{
 			this->isAlive = false;
 			game::DestroyEnemy(i);

@@ -73,19 +73,32 @@ int main()
 	{
 		while (SDL_PollEvent(&event))
 		{
-			switch (event.type)
+			// switch (event.type)
+			// {
+			// case SDL_EVENT_QUIT:
+			// 	game::state.running = false;
+			// 	quit = true;
+			// 	break;
+			// case SDL_EVENT_KEY_DOWN:
+			// 	game::OnKeyDown(event.key);
+			// 	break;
+			// }
+
+			if (event.type == SDL_EVENT_QUIT)
 			{
-			case SDL_EVENT_QUIT:
 				game::state.running = false;
 				quit = true;
 				break;
-			case SDL_EVENT_KEY_DOWN:
-				game::OnKeyDown(event.key);
-				break;
 			}
+			else if (event.type == SDL_EVENT_KEY_DOWN && event.key.repeat == 0)
+			{
+				game::OnKeyDown(event.key);
+			}
+			
+			
 
-			if (quit)
-				break;
+			// if (quit)
+			// 	break;
 		}
 
 		game::CalcDelta();
@@ -95,7 +108,6 @@ int main()
 
 		SDL_SetRenderDrawColorFloat(renderer, 0.0f, 0.0f, 0.0f, SDL_ALPHA_OPAQUE_FLOAT);
 		SDL_RenderClear(renderer);
-		// LIMB_origin(renderer);
 			game::draw(renderer);
 		SDL_RenderPresent(renderer);
 

@@ -1,5 +1,6 @@
 #include "entity.hpp"
 #include "SDL3/SDL.h"
+#include <iostream>
 
 Entity::Entity()
 {
@@ -7,8 +8,8 @@ Entity::Entity()
 	y = 0.0f;
 	rect.x = x;
 	rect.y = y;
-	rect.w = 100.0f;
-	rect.h = 100.0f;
+	rect.w = 30.0f;
+	rect.h = 30.0f;
 	speed = 100.0f;
 	r = 0.5f, g = 1.0f, b = 0.5f;
 };

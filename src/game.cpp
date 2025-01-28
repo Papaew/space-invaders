@@ -19,12 +19,14 @@ namespace game
 {
 	GameState state = {true};
 
-	Entity unit(10.0f, 10.0f, 100.0f, 100.0f, 300.0f);
+	Entity unit(10.0f, 10.0f, 30.0f, 30.0f, 300.0f);
 
 	std::vector<Enemy*> enemies;
+	std::vector<Enemy*> shooters;
 	std::vector<Bullet*> bullets;
 
 	int leftborder,rightborder;
+	bool needToShiftDown = false;
 
 	double dt;
 
@@ -80,7 +82,8 @@ namespace game
 	}
 
 	void update(double &dt)
-	{
+	{	
+		state.coolDown -= dt;
 		// std::string msg = std::string("dt: ") + std::to_string(dt);
 		// print(msg);
 		const bool *keys = SDL_GetKeyboardState(NULL);
@@ -91,16 +94,21 @@ namespace game
 
 		unit.Move(dirx * unit.speed * dt, diry * unit.speed * dt);
 
+		if (needToShiftDown)
+		{
+			state.direction *= -1;
+			shiftEnemiesDown();
+		}
+
 		for (int i = enemies.size()-1; i >= 0; i--)
 		{
 			enemies[i]->Update(dt); //Обновляем
 			if ( enemies[i]->x > rightborder || enemies[i]->x < leftborder)
 			{
-				state.direction *= -1;
-				shiftEnemiesDown();
-				break; //нужен чтобы по пять раз не вызывать движение вниз//в низ
+				needToShiftDown = true;
 			}
 		}
+
 
 		for (int i = bullets.size()-1; i >= 0; i--)
 		{
@@ -110,6 +118,38 @@ namespace game
 				DestroyBullet(i);
 			}
 		}
+
+		if (state.coolDown > 0) return;
+		for (int i = enemies.size()-1; i >= 0; i--)
+		{
+			SDL_FRect collider;
+			collider.w = enemies[i]->rect.w;
+			collider.h = enemies[i]->rect.h*1000;
+			collider.x = enemies[i]->rect.x;
+			collider.y = enemies[i]->rect.y;
+			bool found = false;
+
+			for (int g = enemies.size()-1; g >= 0; g--)
+			{
+				if (i == g) continue; 
+				
+				if (collision(enemies[g]->rect,collider))
+				{
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				shooters.push_back(enemies[i]);
+			}
+			
+		}
+		shooters[SDL_rand(shooters.size()-1)]->Shoot();
+
+		shooters.clear();
+		state.coolDown = 2.0f;
 	}
 
 	void draw(SDL_Renderer *renderer)
@@ -135,7 +175,7 @@ namespace game
 			state.running = false;
 			break;
 		case SDLK_SPACE:
-			Bullet *b = new Bullet(10.0f,20.0f);
+			Bullet *b = new Bullet(10.0f,20.0f,-1);
 			b->SetPosition(unit.x + (unit.rect.w - b->rect.w) / 2, unit.y - b->rect.h);
 			b->SetColor(1.0f,0.0f,0.0f);
 			bullets.push_back(b);
@@ -173,17 +213,27 @@ namespace game
 		delete bullets[i];
 		bullets.erase(bullets.begin()+i);
 	}
+	
 	void DestroyEnemy (int i)
 	{
 		delete enemies[i];
 		enemies.erase(enemies.begin()+i);
-		state.speedMult = pow (1.028f,state.maxEnemyCount - enemies.size());
+		state.speedMult = pow (1.05f,state.maxEnemyCount - enemies.size());
 	}
+	
 	void shiftEnemiesDown()
 	{
 		for (int i = enemies.size()-1; i >= 0; i--)
 		{
-			enemies[i]->Move(0.0f,50.0f);
+			enemies[i]->Move(0.0f,30.0f);
+			enemies[i]->Update(dt);
 		}
+		needToShiftDown = false;
+	}
+	
+	bool collision(SDL_FRect &r1,SDL_FRect &r2)
+	{
+		return (r1.x < r2.x + r2.w && r1.x + r1.w > r2.x && 
+			r1.y < r2.y + r2.h && r1.y + r1.h > r2.y);
 	}
 }

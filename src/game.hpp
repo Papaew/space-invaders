@@ -15,10 +15,12 @@ namespace game
 		int direction = 1;
 		float speedMult = 1.0f;
 		int maxEnemyCount = 0;
+		float coolDown = 0;
     };
     extern GameState state;
 
 	extern std::vector<Enemy*> enemies;
+	extern std::vector<Enemy*> shooters;
 	extern std::vector<Bullet*> bullets;
 
 	void load(SDL_Window *window);
@@ -30,6 +32,7 @@ namespace game
 	void OnKeyDown(SDL_KeyboardEvent keyEvent);
 	void DestroyBullet (int index);
 	void DestroyEnemy (int index);
+	bool collision(SDL_FRect &r1,SDL_FRect &r2);
 }
 
 #endif

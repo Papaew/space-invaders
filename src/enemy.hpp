@@ -10,6 +10,7 @@ public:
     int direction;
     Enemy(float w, float h);
     void Update(double &dt);
+    void Shoot();
     virtual ~Enemy();
 };
 
