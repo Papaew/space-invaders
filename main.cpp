@@ -69,6 +69,9 @@ int main()
 	SDL_Event event;
 
 	double dt;
+
+	
+
 	while (game::state.running)
 	{
 		while (SDL_PollEvent(&event))
@@ -109,12 +112,13 @@ int main()
 		SDL_SetRenderDrawColorFloat(renderer, 0.0f, 0.0f, 0.0f, SDL_ALPHA_OPAQUE_FLOAT);
 		SDL_RenderClear(renderer);
 			game::draw(renderer);
+			// game::drawText("shopa", renderer);
 		SDL_RenderPresent(renderer);
-
 		SDL_Delay(10);
 	}
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
+	TTF_Quit();
 	SDL_Quit();
 }

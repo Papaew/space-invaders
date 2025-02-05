@@ -2,20 +2,23 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include <iostream>
 #include "SDL3/SDL.h"
 #include <vector>
 #include "entity.hpp"
 #include "bullet.hpp"
 #include "enemy.hpp"
+#include "papo4ka.hpp"
 
 namespace game
 {
 	struct GameState {
         bool running;
-		int direction = 1;
-		float speedMult = 1.0f;
+		int direction = 1; //enemy
+		float speedMult = 1.0f; //enemy
 		int maxEnemyCount = 0;
 		float coolDown = 0;
+		int playerLives = 3; 
     };
     extern GameState state;
 
@@ -33,6 +36,7 @@ namespace game
 	void DestroyBullet (int index);
 	void DestroyEnemy (int index);
 	bool collision(SDL_FRect &r1,SDL_FRect &r2);
+	void drawText(std::string text, SDL_Renderer *renderer);
 }
 
 #endif
